@@ -1,0 +1,45 @@
+<Window x:Class="UltraFocusMode.CaptureWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False"
+        Cursor="Cross"
+        Title="UltraFocusMode — Pick Window"
+        MouseLeftButtonDown="OnMouseLeftButtonDown"
+        KeyDown="OnKeyDown">
+
+    <Grid>
+        <!--
+            A near-invisible fill is needed so the transparent window
+            receives mouse-hit events across its entire surface.
+            Alpha = 1/255 ≈ 0.4 % — visually imperceptible.
+        -->
+        <Rectangle Fill="#01000000" IsHitTestVisible="True"/>
+
+        <!-- Hint banner — bottom-centre -->
+        <Border x:Name="HintBanner"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Center"
+                Margin="0,0,0,32"
+                Background="#DD0d0d1e"
+                BorderBrush="#5566ee"
+                BorderThickness="1"
+                CornerRadius="6"
+                Padding="18,8"
+                IsHitTestVisible="False">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="&#x2316;  Click a window to focus it"
+                           Foreground="#ccccff"
+                           FontSize="13"
+                           FontFamily="Segoe UI"/>
+                <TextBlock Text="     ESC to cancel"
+                           Foreground="#7777aa"
+                           FontSize="13"
+                           FontFamily="Segoe UI"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

@@ -1,0 +1,39 @@
+<Window x:Class="UltraFocusMode.OverlayWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False"
+        Title="UltraFocusMode Overlay"
+        Loaded="OnLoaded">
+
+    <Grid>
+        <!--
+            The Path is a full-screen rectangle with a transparent hole punched out
+            where the target window sits.  Because the hole pixels are alpha=0 the
+            user can click through to the real window underneath.
+        -->
+        <Path x:Name="OverlayPath"
+              IsHitTestVisible="True"
+              RenderOptions.EdgeMode="Aliased"/>
+
+        <!-- Small ESC hint — always visible in a corner of the dark area -->
+        <Border x:Name="EscHint"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Center"
+                Margin="0,0,0,18"
+                Background="#BB0d0d1e"
+                BorderBrush="#334"
+                BorderThickness="1"
+                CornerRadius="4"
+                Padding="14,5"
+                IsHitTestVisible="False">
+            <TextBlock x:Name="EscHintText" Text="— exit focus mode"
+                       Foreground="#556688"
+                       FontSize="11"
+                       FontFamily="Segoe UI"/>
+        </Border>
+    </Grid>
+</Window>
