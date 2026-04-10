@@ -1,18 +1,23 @@
-name: Build & Package
+name: Build & Release
 
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
 jobs:
-  build:
+  release:
     runs-on: windows-latest
+    permissions:
+      contents: write   # required to create tags and releases
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Set version
+        id: version
+        shell: bash
+        run: echo "VERSION=1.0.${{ github.run_number }}" >> $GITHUB_OUTPUT
 
       - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
@@ -22,7 +27,7 @@ jobs:
       - name: Restore
         run: dotnet restore UltraFocusMode.csproj
 
-      - name: Publish (self-contained, single file)
+      - name: Publish (self-contained single file)
         run: >
           dotnet publish UltraFocusMode.csproj
           -c Release
@@ -31,14 +36,25 @@ jobs:
           -p:PublishSingleFile=true
           -p:IncludeNativeLibrariesForSelfExtract=true
           -p:EnableCompressionInSingleFile=true
+          -p:Version=${{ steps.version.outputs.VERSION }}
           -o ./publish
 
-      - name: Zip artifact
-        run: Compress-Archive -Path ./publish/UltraFocusMode.exe -DestinationPath UltraFocusMode.zip
+      - name: Zip
+        run: Compress-Archive -Path ./publish/UltraFocusMode.exe -DestinationPath UltraFocusMode-v${{ steps.version.outputs.VERSION }}.zip
 
-      - name: Upload zip
-        uses: actions/upload-artifact@v4
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: UltraFocusMode-${{ github.sha }}
-          path: UltraFocusMode.zip
-          retention-days: 30
+          tag_name: v${{ steps.version.outputs.VERSION }}
+          name: v${{ steps.version.outputs.VERSION }}
+          body: |
+            ## UltraFocusMode v${{ steps.version.outputs.VERSION }}
+
+            Built from commit ${{ github.sha }}
+
+            ### Install
+            Download `UltraFocusMode-v${{ steps.version.outputs.VERSION }}.zip`, extract and run `UltraFocusMode.exe`.
+            No .NET installation required.
+          files: UltraFocusMode-v${{ steps.version.outputs.VERSION }}.zip
+          draft: false
+          prerelease: false
